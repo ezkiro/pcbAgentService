@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
+using System.Diagnostics;
 using pcbAgentLib.httpSender;
 using pcbAgentLib.gamePatchCheck;
 
@@ -36,9 +37,9 @@ namespace pcbAgentLib.pcbAgent
     public sealed class PcbAgent
     {
         private static string AGENT_VERSION = "20170116";
-        //private static string _apiHostAddress = "61.34.180.89";
-        private static string API_HOST_ADDRESS = "localhost";
-        private static string API_HOST_PORT = "8080";
+//        private static string API_HOST_ADDRESS = "61.34.180.89";
+        private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
+        private static string API_HOST_PORT = "80";
 
         //TODO: API request 가 3개이상 늘어나면 별도 class로 분리
         private static string REQUEST_GAME_PATCH = "/agent/gamepatch?client_ip="; // + {client_ip}

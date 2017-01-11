@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Web.Script.Serialization;
 using System.Xml;
+using System.Diagnostics;
 
 namespace pcbAgentLib.gamePatchCheck
 {
