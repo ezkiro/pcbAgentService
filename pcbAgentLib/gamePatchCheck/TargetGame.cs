@@ -20,13 +20,14 @@ namespace pcbAgentLib.gamePatchCheck
         public string VersionFile { get; set; }
         public Fileformat VersionFileFormat { get; set; }
         public string VersionKey { get; set; }
-        public string Etc { get; set; }
+        public bool IsDirCheck { get; set; }
 
         public TargetGame(string gsn, string exefile, string dirName)
         {
             this.Gsn = gsn;
             this.Exefile = exefile;
             this.DirName = dirName;
+            this.IsDirCheck = false;
         }
     }
 
@@ -92,6 +93,7 @@ namespace pcbAgentLib.gamePatchCheck
             targame6.VersionFile = "CFFSVersion.xml";
             targame6.VersionFileFormat = Fileformat.XML;
             targame6.VersionKey = "version";
+            targame6.IsDirCheck = true;
 
             targetGames.Add(targame6);
 
@@ -107,6 +109,7 @@ namespace pcbAgentLib.gamePatchCheck
             targame7.VersionFile = "CFFSVersion.xml";
             targame7.VersionFileFormat = Fileformat.XML;
             targame7.VersionKey = "version";
+            targame7.IsDirCheck = true;
 
             targetGames.Add(targame7);
 
@@ -127,37 +130,25 @@ namespace pcbAgentLib.gamePatchCheck
 
             foreach (TargetGame aGame in targetGames)
             {
-                var firstCheck = foundFiles.Where<string>(path => path.Contains(aGame.Exefile));
+                //후보 파일들을 찾아낸다.
+                var candidateFiles = foundFiles.Where<string>(path => path.Contains(aGame.Exefile));
 
-                List<string> doubleCheck = new List<string>();
-
-                foreach (string path in firstCheck)
+                foreach (string path in candidateFiles)
                 {
-                    Console.WriteLine("[buildFoundExeFileMap] aGame:{0} doubleCheck:{1}", aGame.Gsn, path);
-                    doubleCheck.Add(path);
-                }
-
-                if (doubleCheck.Count == 0) {
-                    continue; // next game
-                }
-                else if(doubleCheck.Count == 1)
-                {
-                    foundExeFileMap.Add(aGame.Gsn, doubleCheck[0]);
-                }
-                else if (doubleCheck.Count > 1)
-                {
-                    //중복된 경우는 DirName으로 한번더 필터링 한다.
-                    foreach (string path in doubleCheck)
+                    //Dir을 체크가 필요하면 체크
+                    if (aGame.IsDirCheck)
                     {
                         if (path.Contains(aGame.DirName))
                         {
-                            Console.WriteLine("[buildFoundExeFileMap] aGame:{0} onlyOne:{1}", aGame.Gsn, path);
+                            Console.WriteLine("[buildFoundExeFileMap] check upper dir aGame:{0} candidateFile:{1}", aGame.Gsn, path);
                             foundExeFileMap.Add(aGame.Gsn, path);
-
-                            //넣은 것은 목록에서 제거한다. CrossFire 때문에 문제가 발생한다.
-                            foundFiles.Remove(path);
                             break;
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine("[buildFoundExeFileMap] aGame:{0} candidateFile:{1}", aGame.Gsn, path);
+                        foundExeFileMap.Add(aGame.Gsn, path);
                     }
                 }
             }

@@ -37,8 +37,8 @@ namespace pcbAgentLib.pcbAgent
     public sealed class PcbAgent
     {
         private static string AGENT_VERSION = "20170116";
-//        private static string API_HOST_ADDRESS = "61.34.180.89";
         private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
+//        private static string API_HOST_ADDRESS = "localhost";
         private static string API_HOST_PORT = "80";
 
         //TODO: API request 가 3개이상 늘어나면 별도 class로 분리
@@ -199,25 +199,18 @@ namespace pcbAgentLib.pcbAgent
         //핵심 mission들 수행 test
         public void executeMissions(bool isSend)
         {
-            //gamepatch pass 가능 여부 체크
-            if (isSend && checkGamePatchPass())
-            {
-                Console.WriteLine("[executeMissions] checkGamePatchPass PASS!!");
-                return;
-            }
-
             //gamepatch 정보 전송
             PcbGamePatch pcbGamePatch = PcbAgent.Instance.buildPcbGamePatch();
 
             var jsonObj = new JavaScriptSerializer().Serialize(pcbGamePatch);
 
-            Console.WriteLine("[executeMissions] buildGamePatch result:{0}", jsonObj.ToString());
+            Debug.WriteLine("[executeMissions] buildGamePatch result:" + jsonObj.ToString());
 
             if (!isSend) return;
 
             String result = PcbAgent.Instance.sendPcbGamePatchToMaster(pcbGamePatch);
 
-            Console.WriteLine("[executeMissions] sendAndReceive result:{0}", result);
+            Debug.WriteLine("[executeMissions] sendAndReceive result:" + result);
         }
     }
 }

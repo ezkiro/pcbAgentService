@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Configuration.Install;
+using System.Diagnostics;
 using pcbAgentLib.pcbAgent;
 
 namespace pcbAgentService
@@ -39,10 +40,10 @@ namespace pcbAgentService
                         PcbAgent.Instance.executeMissions(true);
                         break;
                     case "-help":
-                        Console.WriteLine("Usage: pcbAgentService.exe -[install|uninstall|command]");
+                        Debug.WriteLine("Usage: pcbAgentService.exe -[install|uninstall|command]");
                         break;
                     default:
-                        Console.WriteLine("unknown parameter error! Usage: pcbAgentService.exe -[install|uninstall|command]");
+                        Debug.WriteLine("unknown parameter error! Usage: pcbAgentService.exe -[install|uninstall|command]");
                         throw new NotImplementedException();
                 }
             }
