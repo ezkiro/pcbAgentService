@@ -84,7 +84,7 @@ namespace pcbAgentLib.gamePatchCheck
 
                     foreach (string file in files)
                     {
-                        Console.WriteLine("[FileFinder] found file '{0}'", file);
+                        //Console.WriteLine("[FileFinder] found file '{0}'", file);
                         _foundFiles.Add(file);
                     }
 
@@ -107,6 +107,8 @@ namespace pcbAgentLib.gamePatchCheck
 
         public List<string> findFilePath()
         {
+            if (_targetFiles.Count == 0 ) return _foundFiles;
+
             //local disk 정보를 가져와서 반복 수행
             foreach (string localDrive in Directory.GetLogicalDrives())
             {

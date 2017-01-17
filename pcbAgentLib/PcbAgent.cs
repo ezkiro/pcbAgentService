@@ -36,7 +36,7 @@ namespace pcbAgentLib.pcbAgent
 
     public sealed class PcbAgent
     {
-        private static string AGENT_VERSION = "20170116";
+        private static string AGENT_VERSION = "20170118";
         private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
 //        private static string API_HOST_ADDRESS = "localhost";
         private static string API_HOST_PORT = "80";
@@ -95,16 +95,25 @@ namespace pcbAgentLib.pcbAgent
 
             //target game의 exefile들을 검색하여 위치 파악
             List<string> exeFiles = new List<string>();
+            List<string> verFiles = new List<string>();
 
             foreach (TargetGame aGame in targetGames)
             {
                 exeFiles.Add(aGame.Exefile);
+                if (aGame.IsVerFileOtherPath)
+                {
+                    verFiles.Add(aGame.VersionFile);
+                }
             }
 
             FileFinder finder = new FileFinder("*.exe", exeFiles);
             List<string> foundFiles = finder.findFilePath();
 
-            Dictionary<string, string> foundExeFileMap = TargetGameFactory.buildFoundExeFileMap(foundFiles, targetGames);
+            finder = new FileFinder("*.upf", verFiles);
+            List<string> foundVerFiles = finder.findFilePath();
+
+            //            Dictionary<string, string> foundExeFileMap = TargetGameFactory.buildFoundExeFileMap(foundFiles, targetGames);
+            targetGames = TargetGameFactory.matchFoundExeFileAndVerFile(foundFiles, foundVerFiles, targetGames);
 
             //target game 별로 version 체크
             PcbGamePatch pcbGamePatch = new PcbGamePatch();
@@ -113,8 +122,8 @@ namespace pcbAgentLib.pcbAgent
             foreach (TargetGame aGame in targetGames)
             {
                 //exefile 존재 여부 체크
-                string exeFilePath = null;
-                if (!foundExeFileMap.TryGetValue(aGame.Gsn, out exeFilePath))
+                string exeFilePath = aGame.ExeFilePath;
+                if (exeFilePath == null)
                 {
                     Console.WriteLine("[buildPcbGamePatch] exeFile is not found! gsn:{0}, exefile:{1}", aGame.Gsn, aGame.Exefile);
                     continue;
@@ -128,25 +137,23 @@ namespace pcbAgentLib.pcbAgent
                 }
                 else
                 {
-                    //version 파일 path는 실행파일과 디렉토리 위치가 동일하다고 가정
-                    string gameInstallPath = exeFilePath.Substring(0, exeFilePath.Length - aGame.Exefile.Length);
-                    string versionFilePath = gameInstallPath + aGame.VersionFile;
-
                     //string versionFilePath = FileFinder.findOneFilePath(gameInstallPath, aGame.VersionFile);
 
-                    Console.WriteLine("[buildPcbGamePatch] versionFilePath:{0}", versionFilePath);
+                    if (aGame.VerionFilePath == null) continue;
+
+                    //Console.WriteLine("[buildPcbGamePatch] versionFilePath:{0}", aGame.VerionFilePath);
 
                     //버전파일 체크
                     switch (aGame.VersionFileFormat)
                     {
                         case Fileformat.XML:
-                            pcbGamePatch.pcbGames.Add(new PcbGame(aGame.Gsn, aGame.Exefile, VersionChecker.checkXmlFile(versionFilePath), VersionChecker.checkLastWriteTime(exeFilePath)));
+                            pcbGamePatch.pcbGames.Add(new PcbGame(aGame.Gsn, aGame.Exefile, VersionChecker.checkXmlFile(aGame.VerionFilePath), VersionChecker.checkLastWriteTime(exeFilePath)));
                             break;
                         case Fileformat.JSON:
-                            pcbGamePatch.pcbGames.Add(new PcbGame(aGame.Gsn, aGame.Exefile, VersionChecker.checkJsonFile(versionFilePath), VersionChecker.checkLastWriteTime(exeFilePath)));
+                            pcbGamePatch.pcbGames.Add(new PcbGame(aGame.Gsn, aGame.Exefile, VersionChecker.checkJsonFile(aGame.VerionFilePath), VersionChecker.checkLastWriteTime(exeFilePath)));
                             break;
                         case Fileformat.BIN:
-                            pcbGamePatch.pcbGames.Add(new PcbGame(aGame.Gsn, aGame.Exefile, VersionChecker.checkLastWriteTime(versionFilePath), VersionChecker.checkLastWriteTime(exeFilePath)));
+                            pcbGamePatch.pcbGames.Add(new PcbGame(aGame.Gsn, aGame.Exefile, VersionChecker.checkLastWriteTime(aGame.VerionFilePath), VersionChecker.checkLastWriteTime(exeFilePath)));
                             break;
                         default:
                             //no process

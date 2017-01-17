@@ -51,7 +51,7 @@ namespace pcbAgentLib.httpSender
                 Console.WriteLine("requestJson:: uri is null!");
             }
 
-            Console.WriteLine("requestJson: uri:[{0}], jsonString:{1}", uri, jsonString);
+            //Console.WriteLine("requestJson: uri:[{0}], jsonString:{1}", uri, jsonString);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.Method = "POST";
@@ -127,7 +127,7 @@ namespace pcbAgentLib.httpSender
                 // 응답 Stream -> 응답 String 변환
                 string strResult = srReadData.ReadToEnd();
 
-                Console.WriteLine("sendAndRecv request:[{0}], response:{1}", request.RequestUri, strResult);
+                //Console.WriteLine("sendAndRecv request:[{0}], response:{1}", request.RequestUri, strResult);
                 return strResult;
             }
             catch (Exception e)

@@ -17,14 +17,14 @@ namespace pcbAgentLib.gamePatchCheck
     {
         public static string readTxtFile(string file)
         {
-            Console.WriteLine("[VersionChecker] readTxtFile filePath:{0}", file);
+            //Console.WriteLine("[VersionChecker] readTxtFile filePath:{0}", file);
 
             StreamReader reader = new StreamReader(file);
             try
             {
                 string result = reader.ReadToEnd();
 
-                Console.WriteLine("[VersionChecker] readTxtFile ReadToEnd {0}", result);
+               //Console.WriteLine("[VersionChecker] readTxtFile ReadToEnd {0}", result);
 
                 return result;
             }
@@ -42,7 +42,7 @@ namespace pcbAgentLib.gamePatchCheck
             }
         }
 
-        //일단 soulworker 전용
+        //Stove 전용
         public static string checkJsonFile(string file)
         {
             string jsonString = readTxtFile(file);
