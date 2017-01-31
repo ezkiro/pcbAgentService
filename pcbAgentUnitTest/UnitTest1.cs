@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using pcbAgentLib.pcbAgent;
 using pcbAgentLib.httpSender;
 using pcbAgentLib.gamePatchCheck;
+using pcbAgentLib.protocol;
 
 namespace pcbAgentUnitTest
 {
@@ -64,5 +65,24 @@ namespace pcbAgentUnitTest
             PcbAgent.Instance.executeMissions(true);
         }
 
+        [TestMethod]
+        public void Test_requestAgentCommand()
+        {
+            AgentCommand agentCmd = PcbAgent.Instance.requestAgentCommand();
+
+            Assert.AreNotEqual<AgentCommand>(null, agentCmd);
+
+            Console.WriteLine("AgentCommand cmd:{0}", agentCmd.cmd);
+
+            foreach (GameCommand gameCmd in agentCmd.gameCommands)
+            {
+                Console.WriteLine("GameCommand gsn:{0}, exefile:{1}", gameCmd.gsn, gameCmd.exeFile);
+
+                foreach (InstallPath path in gameCmd.expectedPaths)
+                {
+                    Console.WriteLine("InstallPath gsn:{0}, path:{1}", path.gsn, path.path);
+                }
+            }
+        }
     }
 }

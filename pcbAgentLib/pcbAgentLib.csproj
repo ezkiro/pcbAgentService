@@ -44,13 +44,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="protocol\AgentCommand.cs" />
     <Compile Include="gamePatchCheck\FileFinder.cs" />
+    <Compile Include="protocol\GameCommand.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="gamePatchCheck\TargetGame.cs" />
     <Compile Include="gamePatchCheck\VersionChecker.cs" />
     <Compile Include="httpSender\HttpSender.cs" />
     <Compile Include="PcbAgent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="protocol\InstallPath.cs" />
+    <Compile Include="protocol\MsgConverter.cs" />
+    <Compile Include="protocol\PcbGame.cs" />
+    <Compile Include="protocol\PcbGamePatch.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

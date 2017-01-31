@@ -5,45 +5,24 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 using System.Diagnostics;
 using pcbAgentLib.httpSender;
 using pcbAgentLib.gamePatchCheck;
+using pcbAgentLib.protocol;
 
 namespace pcbAgentLib.pcbAgent
 {
-    public class PcbGame
-    {
-        public PcbGame(string gsn, string name, string major, string minor)
-        {
-            this.gsn = gsn;
-            this.name = name;
-            this.major = major;
-            this.minor = minor;
-        }
-        public string gsn { get; set; }
-        public string name { get; set; }
-        public string major { get; set; }
-        public string minor { get; set; }
-    }
-
-    // {"pcbGames":[{"gsn":"10", "name":"game1", "major":"1234", "minor":""},{"gsn":"20", "name":"game2", "major":"1111", "minor":""}]}
-    public class PcbGamePatch
-    {
-        public string version { get; set; }
-        public List<PcbGame> pcbGames { get; set; }
-    }
-
     public sealed class PcbAgent
     {
         private static string AGENT_VERSION = "20170118";
-        private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
-//        private static string API_HOST_ADDRESS = "localhost";
-        private static string API_HOST_PORT = "80";
+//        private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
+        private static string API_HOST_ADDRESS = "localhost";
+        private static string API_HOST_PORT = "8080";
 
         //TODO: API request 가 3개이상 늘어나면 별도 class로 분리
         private static string REQUEST_GAME_PATCH = "/agent/gamepatch?client_ip="; // + {client_ip}
         private static string REQUEST_PRECHECK = "/agent/check"; // + { client_ip}
+        private static string REQUEST_AGENT_COMMAND = "/agent/command"; // + { client_ip}
 
         private static string buildUriForApiRequest(string urlPath)
         {
@@ -175,11 +154,9 @@ namespace pcbAgentLib.pcbAgent
             if (pcbGamePatch == null) return "pcbGamePatch is null!";
             if (pcbGamePatch.pcbGames.Count == 0) return "pcbGamePatch.pcbGames is empty!";
 
-            var jsonObj = new JavaScriptSerializer().Serialize(pcbGamePatch);
-
             string urlPath = PcbAgent.buildUriForApiRequest(PcbAgent.REQUEST_GAME_PATCH + getLocalIPAddress());
 
-            return HttpSender.requestJson(urlPath, jsonObj.ToString());
+            return HttpSender.requestJson(urlPath, MsgConverter.pack<PcbGamePatch>(pcbGamePatch));
         }
 
         public bool checkGamePatchPass()
@@ -203,15 +180,32 @@ namespace pcbAgentLib.pcbAgent
             return true;
         }
 
+        public AgentCommand requestAgentCommand()
+        {
+            Dictionary<string, string> queryParams = new Dictionary<string, string>();
+
+            queryParams.Add("client_ip", getLocalIPAddress());
+
+            string urlPath = PcbAgent.buildUriForApiRequest(PcbAgent.REQUEST_AGENT_COMMAND);
+
+            string result = HttpSender.requestNormal(urlPath, "GET", queryParams);
+
+            Console.WriteLine("[requestAgentCommand] requestAgentCommand result:{0}", result);
+
+            AgentCommand agentCmd = MsgConverter.unpack<AgentCommand>(result);
+
+            return agentCmd;
+        }
+
         //핵심 mission들 수행 test
         public void executeMissions(bool isSend)
         {
             //gamepatch 정보 전송
             PcbGamePatch pcbGamePatch = PcbAgent.Instance.buildPcbGamePatch();
 
-            var jsonObj = new JavaScriptSerializer().Serialize(pcbGamePatch);
+            string jsonString = MsgConverter.pack<PcbGamePatch>(pcbGamePatch);
 
-            Debug.WriteLine("[executeMissions] buildGamePatch result:" + jsonObj.ToString());
+            Debug.WriteLine("[executeMissions] buildGamePatch result:" + jsonString);
 
             if (!isSend) return;
 
