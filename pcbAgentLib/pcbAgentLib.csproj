@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gamePatchCheck\FileFinder.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="gamePatchCheck\TargetGame.cs" />
     <Compile Include="gamePatchCheck\VersionChecker.cs" />
     <Compile Include="httpSender\HttpSender.cs" />

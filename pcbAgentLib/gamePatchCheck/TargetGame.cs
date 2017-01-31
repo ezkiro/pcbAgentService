@@ -52,7 +52,7 @@ namespace pcbAgentLib.gamePatchCheck
             List<TargetGame> targetGames = new List<TargetGame>();
 
             //for soulworker
-            TargetGame targame1 = new TargetGame("1", "SWOS.exe", "soulworker");
+            TargetGame targame1 = new TargetGame("1", "SoulWorker.exe", "soulworker");
 
             /*
             {
@@ -63,7 +63,7 @@ namespace pcbAgentLib.gamePatchCheck
                 }
             }
             */
-            targame1.VersionFile = "gamemanifest_11.upf";
+            targame1.VersionFile = "gamemanifest_11_live.upf";
             targame1.VersionFileFormat = Fileformat.JSON;
             targame1.VersionKey = "gameinfo:version";
             targame1.IsVerFileOtherPath = true;
@@ -101,7 +101,7 @@ namespace pcbAgentLib.gamePatchCheck
                 }
             }
             */
-            targame5.VersionFile = "gamemanifest_8.upf";
+            targame5.VersionFile = "gamemanifest_8_live.upf";
             targame5.VersionFileFormat = Fileformat.JSON;
             targame5.VersionKey = "gameinfo:version";
             targame5.IsVerFileOtherPath = true;

@@ -114,7 +114,20 @@ namespace pcbAgentLib.gamePatchCheck
             {
                 Console.WriteLine("[FileFinder] local drive:{0}", localDrive);
 
-                DirSearch(localDrive);
+                try
+                {
+                    //skip c: drive
+                    if (localDrive.Contains("c:\\") || localDrive.Contains("C:\\")) continue;
+
+                    DirSearch(localDrive);
+                }
+                catch (System.Exception excpt)
+                {
+                    Console.WriteLine("[FileFinder] exception {0}:{1}", excpt.GetType(), excpt.Message);
+                    //exception 발생하면 다음 drive 로 skip 한다.
+                    continue;
+                }
+
                 if (isFoundAllFiles()) break;
             }
 

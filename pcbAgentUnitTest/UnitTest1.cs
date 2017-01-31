@@ -55,11 +55,11 @@ namespace pcbAgentUnitTest
         public void Test_executeMissions()
         {
             //gamepatch pass 가능 여부 체크
-            if (PcbAgent.Instance.checkGamePatchPass())
-            {
-                Debug.WriteLine("[executeMissions] checkGamePatchPass PASS!!");
-                return;
-            }
+            //if (PcbAgent.Instance.checkGamePatchPass())
+            //{
+            //    Debug.WriteLine("[executeMissions] checkGamePatchPass PASS!!");
+            //    return;
+            //}
 
             PcbAgent.Instance.executeMissions(true);
         }
