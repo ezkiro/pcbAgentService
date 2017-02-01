@@ -27,7 +27,7 @@ namespace pcbAgentLib.gamePatchCheck
         /// <summary>
         /// 지정 디텍토리로부터 하위 디렉토리까지 모두 뒤지면서 검색하는 공용 함수
         /// </summary>
-        public static string findOneFilePath(string path, string fileName)
+        public static string findInSubDir(string path, string fileName)
         {
             foreach (string dir in Directory.GetDirectories(path))
             {
@@ -35,18 +35,18 @@ namespace pcbAgentLib.gamePatchCheck
                 {
                     foreach (string file in Directory.GetFiles(dir, fileName))
                     {
-                        Console.WriteLine("[findOneFilePath] found file '{0}'", file);
+                        Console.WriteLine("[findInSubDir] found file '{0}'", file);
                         return file;
                     }
                 }
                 catch (System.Exception excpt)
                 {
-                    Console.WriteLine("[findOneFilePath] exception {0}:{1}", excpt.GetType(), excpt.Message);
+                    Console.WriteLine("[findInSubDir] exception {0}:{1}", excpt.GetType(), excpt.Message);
                     //exception 발생하면 다음 dir 로 skip 한다.
                     continue;
                 }
 
-                findOneFilePath(dir, fileName);
+                findInSubDir(dir, fileName);
             }
 
             return null;

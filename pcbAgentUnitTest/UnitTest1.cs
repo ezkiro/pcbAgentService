@@ -84,5 +84,25 @@ namespace pcbAgentUnitTest
                 }
             }
         }
+
+        [TestMethod]
+        public void Test_quickFinder()
+        {
+            List<string> targetPaths = new List<string>();
+
+            targetPaths.Add("alba\\pcbagent\\games\\cave");
+            targetPaths.Add("alba\\pcbagent\\games\\SW");
+
+
+            QuickFinder finder = new QuickFinder("SWOS.exe", targetPaths);
+            string foundFile = finder.findInAllDrive();
+
+            Console.WriteLine("found file path:{0}", foundFile);
+
+            QuickFinder finder2 = new QuickFinder("gamemanifest_11.upf", targetPaths);
+            string foundFile2 = finder2.findRInAllDrive();
+
+            Console.WriteLine("found file path:{0}", foundFile2);
+        }
     }
 }
