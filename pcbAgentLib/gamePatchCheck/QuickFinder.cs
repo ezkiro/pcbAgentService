@@ -69,7 +69,18 @@ namespace pcbAgentLib.gamePatchCheck
                 Console.WriteLine("[searchRFile] filePath:'{0}'", filePath);
                 try
                 {
-                    if (!Directory.Exists(filePath)) continue;
+                    if (!Directory.Exists(filePath))
+                    {
+                        Console.WriteLine("[searchRFile] not exist file path:'{0}'", filePath);
+                        continue;
+                    }
+
+                    //filePath에서 한번 찾아보고 없으면 sub 디렉토리로 검색한다.
+                    foreach (string file in Directory.GetFiles(filePath, _targetFile))
+                    {
+                        Console.WriteLine("[searchRFile] found file '{0}'", file);
+                        return file;
+                    }
 
                     return FileFinder.findInSubDir(filePath, _targetFile);
 

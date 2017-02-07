@@ -17,7 +17,7 @@ namespace pcbAgentLib.gamePatchCheck
     {
         public static string readTxtFile(string file)
         {
-            //Console.WriteLine("[VersionChecker] readTxtFile filePath:{0}", file);
+            Console.WriteLine("[VersionChecker] readTxtFile filePath:{0}", file);
 
             StreamReader reader = new StreamReader(file);
             try

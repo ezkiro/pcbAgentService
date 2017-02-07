@@ -9,15 +9,17 @@ using System.Diagnostics;
 using pcbAgentLib.httpSender;
 using pcbAgentLib.gamePatchCheck;
 using pcbAgentLib.protocol;
+using System.Threading;
 
 namespace pcbAgentLib.pcbAgent
 {
     public sealed class PcbAgent
     {
-        private static string AGENT_VERSION = "20170118";
+        private static string AGENT_VERSION = "20170203";
 //        private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
         private static string API_HOST_ADDRESS = "localhost";
         private static string API_HOST_PORT = "8080";
+        private static int DELAY_TIME_SEC = 60;
 
         //TODO: API request 가 3개이상 늘어나면 별도 class로 분리
         private static string REQUEST_GAME_PATCH = "/agent/gamepatch?client_ip="; // + {client_ip}
@@ -156,6 +158,8 @@ namespace pcbAgentLib.pcbAgent
 
             string urlPath = PcbAgent.buildUriForApiRequest(PcbAgent.REQUEST_GAME_PATCH + getLocalIPAddress());
 
+            Console.WriteLine("[sendPcbGamePatchToMaster] pcbGamePatch result:{0}", MsgConverter.pack<PcbGamePatch>(pcbGamePatch));
+
             return HttpSender.requestJson(urlPath, MsgConverter.pack<PcbGamePatch>(pcbGamePatch));
         }
 
@@ -197,21 +201,111 @@ namespace pcbAgentLib.pcbAgent
             return agentCmd;
         }
 
-        //핵심 mission들 수행 test
-        public void executeMissions(bool isSend)
+        public PcbGame executeGameCommand(GameCommand gameCmd)
         {
+            Console.WriteLine("[executeGameCommand] gameCmd:" + gameCmd.ToString());
+
+            //find exefile from expectedPaths
+            List <string> targetPaths = new List<string>();
+
+            foreach (InstallPath aPath in gameCmd.expectedPaths)
+            {
+                if (aPath.type.Equals("exe"))
+                {
+                    targetPaths.Add(aPath.path);
+                }
+            }
+
+            QuickFinder finder = new QuickFinder(gameCmd.exeFile, targetPaths);
+            string foundFile = finder.findInAllDrive();
+
+            if (foundFile == null) return null;
+
+            //check verify type
+            if (gameCmd.verifyType.Equals("INSTALL"))
+            {
+                return new PcbGame(gameCmd.gsn, foundFile, "N/A", VersionChecker.checkLastWriteTime(foundFile));
+            }
+            else
+            {
+                //find verfile from expectedPaths
+                List<string> verTargetPaths = new List<string>();
+                foreach (InstallPath aPath in gameCmd.expectedPaths)
+                {
+                    if (aPath.type.Equals("ver"))
+                    {
+                        verTargetPaths.Add(aPath.path);
+                    }
+                }
+
+                //verfile을 위한 path가 없다면 exefile의 path에서 찾는다.
+                if (verTargetPaths.Count == 0)
+                {
+                    //foundFile에서 exefile명을 제외한 path
+                    verTargetPaths.Add(foundFile.Substring(0, foundFile.Length - gameCmd.exeFile.Length));
+                }
+
+                QuickFinder verFinder = new QuickFinder(gameCmd.verFile, verTargetPaths);
+                string foundVerFile = verFinder.findRInAllDrive();
+
+                if (foundVerFile == null) return null;
+
+                //check version file
+
+                if (gameCmd.verFileFmt.Equals("XML"))
+                {
+                    return new PcbGame(gameCmd.gsn, foundFile, VersionChecker.checkXmlFile(foundVerFile), VersionChecker.checkLastWriteTime(foundFile));
+                }
+                else if (gameCmd.verFileFmt.Equals("JSON"))
+                {
+                    return new PcbGame(gameCmd.gsn, foundFile, VersionChecker.checkJsonFile(foundVerFile), VersionChecker.checkLastWriteTime(foundFile));
+                }
+                else if (gameCmd.verFileFmt.Equals("BIN"))
+                {
+                    return new PcbGame(gameCmd.gsn, foundFile, VersionChecker.checkLastWriteTime(foundVerFile), VersionChecker.checkLastWriteTime(foundFile));
+                }
+                else
+                {
+                    //no process
+                    Console.WriteLine("[executeGameCommand] not supprot version formant:{0}", gameCmd.verFileFmt);
+                }
+            }
+
+            return null;
+        }
+
+        //핵심 mission들 수행 test
+        public string executeMissions(bool isForce)
+        {
+            //5분뒤에 실행
+            //Thread.Sleep(DELAY_TIME_SEC * 1000);
+
+            if (!isForce && checkGamePatchPass())
+            {
+                return "PASS";
+            }
+
+            //request Agent Command
+            AgentCommand agentCmd = requestAgentCommand();
+
+            PcbGamePatch pcbGamePatch = new PcbGamePatch();
+            pcbGamePatch.pcbGames = new List<PcbGame>();
+            pcbGamePatch.version = PcbAgent.AGENT_VERSION;
+
+            //GameCommand 처리
+            foreach (GameCommand gameCmd in agentCmd.gameCommands)
+            {
+                PcbGame pcbGame = executeGameCommand(gameCmd);
+                if (pcbGame != null)
+                {
+                    pcbGamePatch.pcbGames.Add(pcbGame);
+                }
+            }
+
             //gamepatch 정보 전송
-            PcbGamePatch pcbGamePatch = PcbAgent.Instance.buildPcbGamePatch();
-
-            string jsonString = MsgConverter.pack<PcbGamePatch>(pcbGamePatch);
-
-            Debug.WriteLine("[executeMissions] buildGamePatch result:" + jsonString);
-
-            if (!isSend) return;
-
-            String result = PcbAgent.Instance.sendPcbGamePatchToMaster(pcbGamePatch);
-
-            Debug.WriteLine("[executeMissions] sendAndReceive result:" + result);
+            String result = sendPcbGamePatchToMaster(pcbGamePatch);
+            Debug.WriteLine("[executeMissions] sendPcbGamePatchToMaster result:" + result);
+            return result;
         }
     }
 }

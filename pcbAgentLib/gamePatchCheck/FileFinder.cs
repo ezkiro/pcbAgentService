@@ -46,7 +46,7 @@ namespace pcbAgentLib.gamePatchCheck
                     continue;
                 }
 
-                findInSubDir(dir, fileName);
+                return findInSubDir(dir, fileName);
             }
 
             return null;
