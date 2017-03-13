@@ -41,12 +41,19 @@ namespace pcbAgentLib.gamePatchCheck
                 Console.WriteLine("[searchFile] filePath:'{0}'", filePath);
                 try
                 {
-                    if (!Directory.Exists(filePath)) continue;
+                    //if (!Directory.Exists(filePath)) continue;
 
-                    foreach (string file in Directory.GetFiles(filePath, _targetFile))
+                    //foreach (string file in Directory.GetFiles(filePath, _targetFile))
+                    //{
+                    //    Console.WriteLine("[searchFile] found file '{0}'", file);
+                    //    return file;
+                    //}
+                    string checkfile = filePath + "\\" + _targetFile;
+                    Console.WriteLine("[searchFile] checkfile:'{0}'", checkfile);
+                    if (File.Exists(checkfile))
                     {
-                        Console.WriteLine("[searchFile] found file '{0}'", file);
-                        return file;
+                        Console.WriteLine("[searchFile] found checkfile:'{0}'", checkfile);
+                        return checkfile;                        
                     }
                 }
                 catch (System.Exception excpt)

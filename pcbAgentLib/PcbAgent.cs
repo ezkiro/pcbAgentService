@@ -4,21 +4,20 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Diagnostics;
 using pcbAgentLib.httpSender;
 using pcbAgentLib.gamePatchCheck;
 using pcbAgentLib.protocol;
-using System.Threading;
 
 namespace pcbAgentLib.pcbAgent
 {
     public sealed class PcbAgent
     {
-        private static string AGENT_VERSION = "20170203";
-//        private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
-        private static string API_HOST_ADDRESS = "localhost";
-        private static string API_HOST_PORT = "8080";
+        private static string AGENT_VERSION = "20170310";
+        private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
+        //private static string API_HOST_ADDRESS = "localhost";
+        private static string API_HOST_PORT = "80";
         private static int DELAY_TIME_SEC = 60;
 
         //TODO: API request 가 3개이상 늘어나면 별도 class로 분리
@@ -246,8 +245,8 @@ namespace pcbAgentLib.pcbAgent
                 }
 
                 QuickFinder verFinder = new QuickFinder(gameCmd.verFile, verTargetPaths);
-                string foundVerFile = verFinder.findRInAllDrive();
-
+//                string foundVerFile = verFinder.findRInAllDrive();
+                string foundVerFile = verFinder.findInAllDrive();
                 if (foundVerFile == null) return null;
 
                 //check version file
@@ -277,8 +276,9 @@ namespace pcbAgentLib.pcbAgent
         //핵심 mission들 수행 test
         public string executeMissions(bool isForce)
         {
-            //5분뒤에 실행
-            //Thread.Sleep(DELAY_TIME_SEC * 1000);
+            //10초 ~ 1분 사이에 실행됨 실행
+            Random random = new Random();
+            Thread.Sleep(random.Next(10, DELAY_TIME_SEC) * 1000);
 
             if (!isForce && checkGamePatchPass())
             {

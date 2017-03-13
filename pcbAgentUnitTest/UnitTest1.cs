@@ -94,13 +94,13 @@ namespace pcbAgentUnitTest
             targetPaths.Add("alba\\pcbagent\\games\\SW");
 
 
-            QuickFinder finder = new QuickFinder("SWOS.exe", targetPaths);
+            QuickFinder finder = new QuickFinder("SoulWorker.exe", targetPaths);
             string foundFile = finder.findInAllDrive();
 
             Console.WriteLine("found file path:{0}", foundFile);
 
             QuickFinder finder2 = new QuickFinder("gamemanifest_11.upf", targetPaths);
-            string foundFile2 = finder2.findRInAllDrive();
+            string foundFile2 = finder2.findInAllDrive();
 
             Console.WriteLine("found file path:{0}", foundFile2);
         }
