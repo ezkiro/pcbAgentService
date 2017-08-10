@@ -14,11 +14,11 @@ namespace pcbAgentLib.pcbAgent
 {
     public sealed class PcbAgent
     {
-        private static string AGENT_VERSION = "20170310";
+        private static string AGENT_VERSION = "20170810";
         private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
         //private static string API_HOST_ADDRESS = "localhost";
         private static string API_HOST_PORT = "80";
-        private static int DELAY_TIME_SEC = 60;
+        private static int DELAY_TIME_SEC = 70;
 
         //TODO: API request 가 3개이상 늘어나면 별도 class로 분리
         private static string REQUEST_GAME_PATCH = "/agent/gamepatch?client_ip="; // + {client_ip}
@@ -278,7 +278,7 @@ namespace pcbAgentLib.pcbAgent
         {
             //10초 ~ 1분 사이에 실행됨 실행
             Random random = new Random();
-            Thread.Sleep(random.Next(10, DELAY_TIME_SEC) * 1000);
+            Thread.Sleep(random.Next(20, DELAY_TIME_SEC) * 1000);
 
             if (!isForce && checkGamePatchPass())
             {
