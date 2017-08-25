@@ -14,9 +14,9 @@ namespace pcbAgentLib.pcbAgent
 {
     public sealed class PcbAgent
     {
-        private static string AGENT_VERSION = "20170810";
+        private static string AGENT_VERSION = "20170822";
         private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
-        //private static string API_HOST_ADDRESS = "localhost";
+        //private static string API_HOST_ADDRESS = "61.37.219.80";
         private static string API_HOST_PORT = "80";
         private static int DELAY_TIME_SEC = 70;
 
@@ -57,9 +57,22 @@ namespace pcbAgentLib.pcbAgent
                 return "127.0.0.1";
             }
 
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
+            // 2017-08-23 아래 코드는 일부 PC방에서 No host is known 오류를 발생시킨다.
+            //var host = Dns.GetHostEntry(Dns.GetHostName());
+            //foreach (var ip in host.AddressList)
+            //{
+            //    if (ip.AddressFamily == AddressFamily.InterNetwork)
+            //    {
+            //        return ip.ToString();
+            //    }
+            //}
+            //throw new Exception("Local IP Address Not Found!");
+
+            IPAddress[] ips = Dns.GetHostAddresses("");
+            foreach (var ip in ips)
             {
+                Console.WriteLine("[getLocalIPAddress] ip:{0}", ip);
+
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
                     return ip.ToString();

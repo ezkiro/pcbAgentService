@@ -36,6 +36,12 @@ namespace pcbAgentUnitTest
         }
 
         [TestMethod]
+        public void Test_getLocalIPAddress()
+        {
+            Console.WriteLine("ip address:{0}", PcbAgent.getLocalIPAddress());
+        }
+
+        [TestMethod]
         public void Test_findFile()
         {
             List<string> targetFiles = new List<string>();
