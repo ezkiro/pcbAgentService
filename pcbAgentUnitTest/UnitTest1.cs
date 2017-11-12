@@ -110,5 +110,16 @@ namespace pcbAgentUnitTest
 
             Console.WriteLine("found file path:{0}", foundFile2);
         }
+
+        [TestMethod]
+        public void Test_checkVersionFile()
+        {
+            string filePath = "C:\\works\\alba\\PcbAgent\\LauncherInstalled\\LauncherInstalled.dat";
+            string appName = "OrionLive";
+
+            string version = VersionChecker.checkEpicFile(filePath, appName);
+
+            Console.WriteLine("extracted version:{0}", version);
+        }
     }
 }

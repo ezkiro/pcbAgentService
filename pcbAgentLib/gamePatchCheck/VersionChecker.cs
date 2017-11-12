@@ -7,6 +7,7 @@ using System.IO;
 using System.Web.Script.Serialization;
 using System.Xml;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace pcbAgentLib.gamePatchCheck
 {
@@ -89,6 +90,32 @@ namespace pcbAgentLib.gamePatchCheck
                 //오류발생시 null 을  반환하도록 한다.
                 return null;
             }
+        }
+
+        //for epic game
+        public static string checkEpicFile(string file, string appName)
+        {
+            string jsonStr = readTxtFile(file);
+            if (jsonStr == null) return null;
+
+            EpicVersion version = JsonConvert.DeserializeObject<EpicVersion>(jsonStr);
+
+            if (version == null) return null;
+
+            return version.getVersion(appName);
+        }
+
+        //for stove game
+        public static string checkStoveFile(string file)
+        {
+            string jsonStr = readTxtFile(file);
+            if (jsonStr == null) return null;
+
+            StoveVersion version = JsonConvert.DeserializeObject<StoveVersion>(jsonStr);
+
+            if (version == null) return null;
+
+            return version.getVersion();
         }
     }
 }

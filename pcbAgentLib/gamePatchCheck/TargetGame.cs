@@ -42,7 +42,8 @@ namespace pcbAgentLib.gamePatchCheck
         XML,
         INI,
         TXT,
-        BIN
+        BIN,
+        EPIC
     }
 
     public static class TargetGameFactory
