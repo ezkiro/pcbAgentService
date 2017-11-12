@@ -14,7 +14,7 @@ namespace pcbAgentLib.pcbAgent
 {
     public sealed class PcbAgent
     {
-        private static string AGENT_VERSION = "20170822";
+        public static string AGENT_VERSION = "20170822";
         private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
         //private static string API_HOST_ADDRESS = "61.37.219.80";
         private static string API_HOST_PORT = "80";
