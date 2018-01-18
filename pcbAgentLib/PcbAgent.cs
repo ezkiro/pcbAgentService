@@ -14,9 +14,9 @@ namespace pcbAgentLib.pcbAgent
 {
     public sealed class PcbAgent
     {
-        public static string AGENT_VERSION = "20171112";
+        public static string AGENT_VERSION = "20180119";
         private static string API_HOST_ADDRESS = "www.e-gpms.co.kr";
-        //private static string API_HOST_ADDRESS = "61.37.219.80";
+        //private static string API_HOST_ADDRESS = "192.168.219.106";
         private static string API_HOST_PORT = "80";
         private static int DELAY_TIME_SEC = 70;
 
@@ -263,6 +263,7 @@ namespace pcbAgentLib.pcbAgent
                 if (foundVerFile == null) return null;
 
                 //check version file
+                Console.WriteLine("[executeGameCommand] foundVerFile:{0}", foundVerFile);
 
                 if (gameCmd.verFileFmt.Equals("XML"))
                 {
@@ -276,10 +277,14 @@ namespace pcbAgentLib.pcbAgent
                 {
                     return new PcbGame(gameCmd.gsn, foundFile, VersionChecker.checkLastWriteTime(foundVerFile), VersionChecker.checkLastWriteTime(foundFile));
                 }
+                else if (gameCmd.verFileFmt.Equals("EPIC"))
+                {
+                    return new PcbGame(gameCmd.gsn, foundFile, VersionChecker.checkEpicFile(foundVerFile, gameCmd.verKey), VersionChecker.checkLastWriteTime(foundFile));
+                }
                 else
                 {
                     //no process
-                    Console.WriteLine("[executeGameCommand] not supprot version formant:{0}", gameCmd.verFileFmt);
+                    Console.WriteLine("[executeGameCommand] not supprot version format:{0}", gameCmd.verFileFmt);
                 }
             }
 
